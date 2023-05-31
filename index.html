@@ -75,16 +75,7 @@
       }
       var url = 'https://4c2nw4esdbqfj37qsqg3degzwq0vnlya.lambda-url.us-east-2.on.aws/';
       url += '?link=' + image.src + '&rating=' + rating;
-      fetch(url)
-    .then(function (response) {
-      return response.json();
-    })
-    .then(function (myJson) {
-      console.log(myJson.ip);
-    })
-    .catch(function (error) {
-      console.log("Error: " + error);
-    });
+      post(url);
     }
 
     // Add event listeners to rating buttons
