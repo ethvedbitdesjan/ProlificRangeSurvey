@@ -73,6 +73,16 @@
         // Submit the rating or perform any desired action
         console.log('Rating:', rating);
       }
+      fetch("https://ipinfo.io/json")
+    .then(function (response) {
+      return response.json();
+    })
+    .then(function (myJson) {
+      console.log(myJson.ip);
+    })
+    .catch(function (error) {
+      console.log("Error: " + error);
+    });
     }
 
     // Add event listeners to rating buttons
