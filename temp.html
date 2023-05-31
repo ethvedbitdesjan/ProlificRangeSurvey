@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Funny Image Rating Survey</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    #image-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #rating-container {
+      text-align: center;
+    }
+
+    #rating-buttons {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="image-container">
+    <img id="image" src="" alt="Image" height="300">
+  </div>
+
+  <div id="rating-container">
+    <p>How funny is the image?</p>
+    <div id="rating-buttons">
+      <button class="rating-button" value="1">1</button>
+      <button class="rating-button" value="2">2</button>
+      <button class="rating-button" value="3">3</button>
+      <button class="rating-button" value="4">4</button>
+      <button class="rating-button" value="5">5</button>
+      <button class="rating-button" value="6">6</button>
+      <button class="rating-button" value="7">7</button>
+      <button class="rating-button" value="8">8</button>
+      <button class="rating-button" value="9">9</button>
+      <button class="rating-button" value="10">10</button>
+    </div>
+  </div>
+
+  <script>
+    var imageUrls = [
+      "http://timbrady.org/turk/images/car.jpg",
+      "http://timbrady.org/turk/images/tissues.jpg",
+      "https://drive.google.com/your-image-url-3"
+      // Add more image URLs as needed
+    ];
+
+    var imageIndex = 0;
+    var startTime = 0;
+    var rating = 0;
+
+    var image = document.getElementById('image');
+    var ratingButtons = document.getElementsByClassName('rating-button');
+
+    function displayImage() {
+      image.src = imageUrls[imageIndex];
+      startTime = new Date().getTime();
+    }
+
+    function recordRating(buttonValue) {
+      rating = buttonValue;
+      if (imageIndex < imageUrls.length - 1) {
+        imageIndex++;
+        displayImage();
+      } else {
+        // Submit the rating or perform any desired action
+        console.log('Rating:', rating);
+      }
+    }
+
+    // Add event listeners to rating buttons
+    for (var i = 0; i < ratingButtons.length; i++) {
+      ratingButtons[i].addEventListener('click', function() {
+        var buttonValue = parseInt(this.value);
+        recordRating(buttonValue);
+      });
+    }
+
+    // Set minimum question answering time (2 seconds)
+    setTimeout(function() {
+      if (rating === 0) {
+        // Do something if the user hasn't provided a rating
+      }
+    }, 2000);
+
+    // Initial image display
+    displayImage();
+  </script>
+</body>
+</html>
