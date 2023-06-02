@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <title>Funny Image Rating Survey</title>
   <h1> Funny Image Rating Survey</h1>
   <style>
@@ -354,31 +355,79 @@
   </div>
 
   <script>
+    var imageUrls = [];
+    var group = 0;
     var allImageUrls = [];
-    //read contents of text.txt into allImageUrls
-    var imageUrls = [
-      "https://drive.google.com/uc?export=view&id=1T_ZRpOYfFZbvmSgdxEXk-QyHJsafQZ1l",
-      "http://timbrady.org/turk/images/car.jpg",
-      "http://timbrady.org/turk/images/tissues.jpg"
-      // Add more image URLs as needed
-    ];
+    $.ajax({
+      async: false,
+      url: "https://vec4o4b5mpecng5vpciu6a3rdu0xxeem.lambda-url.us-east-2.on.aws/",
+      type: "GET",
+      success: function(data) {
+        // Do something with the data
+        group = data;
+      },
+      error: function(error) {
+        // Handle the error
+        console.log(error);
+      }
+    });
+    $.ajax({
+      async: false,
+      url: "https://raw.githubusercontent.com/ethvedbitdesjan/MTurkProlificSurvey/master/Links/GdriveLinks.txt",
+      type: "GET",
+      success: function(data) {
+        // Do something with the data
+        allImageUrls = data.split("\n");
+      },
+      error: function(error) {
+        // Handle the error
+        console.log(error);
+      }
+    });
+
+    console.log(allImageUrls.length);
+    const images_per_hit = 50;
+    const num_groups = Math.floor(allImageUrls.length / images_per_hit);
+    var start_idx = Math.min(group * images_per_hit, allImageUrls.length);
+    var end_idx = Math.min((group + 1) * images_per_hit, allImageUrls.length);
+    imageUrls = allImageUrls.slice(start_idx, end_idx);
+    if (imageUrls.length < images_per_hit) {
+      var num_extra = images_per_hit - imageUrls.length;
+      for (let i = 0; i < num_extra; i++) {
+        var random_idx = (Math.floor(Math.random() * (allImageUrls.length - imageUrls.length)));
+        imageUrls.push(allImageUrls[random_idx]);
+      }
+    }
 
     var image_len = imageUrls.length;
     for (let i = 0; i < Math.floor(0.1 * image_len); i++) {
-      var random_idx = (Math.floor(Math.random() * length));
+      var random_idx = (Math.floor(Math.random() * image_len));
       imageUrls.push(imageUrls[random_idx]);
     }
+    console.log(group);
+    console.log(imageUrls.length);
+    //console.log(imageUrls);
+
+    // async function getUrls() {
+    //   let response = await fetch('https://raw.githubusercontent.com/ethvedbitdesjan/MTurkProlificSurvey/master/Links/GdriveLinks.txt');
+    //   let data = await response.text();
+    //   return data;
+    // }
+    // getUrls().then(data => {
+    //   allImageUrls = data.split("\n");
+    //   console.log(allImageUrls.length);
+    // });
+    
 
     var imageIndex = 0;
     var startTime = 0;
     var rating = 0;
     var ratings_list = [];
     var demographics = {};
-
     var image = document.getElementById('image');
     var ratingButtons = document.getElementsByClassName('rating-button');
     function displayImage() {
-      image.src = imageUrls[imageIndex];
+      image.src = 'https://drive.google.com/uc?export=view&id=' + imageUrls[imageIndex];
       startTime = new Date().getTime();
     }
 
@@ -451,6 +500,7 @@
       } else {
         start_demogr.style.display = 'none';
       }
+      console.log(imageUrls.length);
     });
 
     var demogr_submit = document.getElementById('demogr-submit');
@@ -486,6 +536,7 @@
       } else {
         image_container.style.display = 'none';
       }
+      console.log(imageUrls.length);
       displayImage();
     });
     // Set minimum question answering time (2 seconds)
