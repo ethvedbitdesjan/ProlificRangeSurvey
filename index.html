@@ -92,15 +92,28 @@
       font-family: Arial;
     }
 
+    #processing-message {
+      text-align: center;
+      margin: 10px;
+      font-size: 1.2em;
+      font-family: sans-serif;
+      color: blue;
+    }
+
+    button:active {
+      background-color: yellow;
+      color: blue;
+    }
   </style>
 </head>
 <body>
   <div id="welcome">
     <p> Welcome to the Funny Image Rating Survey! </p>
-    <p> Please rate the funniness of the images below on a scale of 1 to 10. (1 being the not funny and 10 being very funny)</p>
-    <p> For rating all the images, you will receive $1.00</p>
+    <p> Please rate the funniness of the images below on a scale of 1 to 10. (1 being not funny and 10 being very funny)</p>
+    <p> For rating all the images, you will receive $1.30</p>
+    <p> Only click on the rating buttons once, and wait till the next image loads(maximum 1 second), a message will show you when the next image is being processed.</p>
     <p> Please do not refresh the page. You will lose progress and will have to start again. </p>
-    <p> There are 50 images in this survey</p>
+    <p> There are 50-55 images in this survey</p>
     <p> At the end of the survey, we will provide you a code, please store it and use it appropriately to get the reward.</p>
     <p> Click the button below to begin. </p>
     <button class="start-button" value="1" id="start-button"> Let's Start</button>
@@ -331,6 +344,10 @@
     <img id="image" src="" alt="Image" height="300">
   </div>
 
+  <div id="processing-message" style="display: none;">
+    <p>Processing...Please Wait and Do Not Click any Ratings Buttons</p>
+  </div>
+
   <div id="rating-container" style="display: none;">
     <p>How funny is the image?</p>
     <div style="display: flex; flex-direction: row; text-align: center; justify-content: center;">
@@ -426,8 +443,18 @@
     var demographics = {};
     var image = document.getElementById('image');
     var ratingButtons = document.getElementsByClassName('rating-button');
+    var img = new Image();
+    img.onload = function() {
+      image.src = this.src;
+      var processing_message = document.getElementById('processing-message');
+      processing_message.innerHTML = 'Continue';
+      processing_message.style.display = 'block';
+    };
+    var processing_message = document.getElementById('processing-message');
     function displayImage() {
-      image.src = 'https://drive.google.com/uc?export=view&id=' + imageUrls[imageIndex];
+      processing_message.innerHTML = 'Processing...Please Wait and Do Not Click any Ratings Buttons';
+      processing_message.style.display = 'block';
+      img.src =  'https://drive.google.com/uc?export=view&id=' + imageUrls[imageIndex];
       startTime = new Date().getTime();
     }
 
@@ -538,6 +565,12 @@
       }
       console.log(imageUrls.length);
       displayImage();
+      var processing_message = document.getElementById('processing-message');
+      if (processing_message.style.display === 'none') {
+        processing_message.style.display = 'block';
+      } else {
+        processing_message.style.display = 'none';
+      }
     });
     // Set minimum question answering time (2 seconds)
     setTimeout(function() {
