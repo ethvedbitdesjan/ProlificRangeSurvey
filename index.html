@@ -134,6 +134,11 @@
       </select>
     </div>
     <div>
+      <p id="demogr-prolific" class="prompt">Prolific ID: </p>
+      <input type = "text" name="prolific-id" class="value">
+      </input>
+    </div>
+    <div>
       <p id="demogr-nationality" class="prompt"> Nationality </p>
       <select name="nationality" class="value">
         <option value="">-- select one --</option>
@@ -376,6 +381,7 @@
     var imageUrls = [];
     var group = 0;
     var allImageUrls = [];
+    var prolific_id = "";
     $.ajax({
       async: false,
       url: "https://ytgbbx4ihs4axjbynqgc6pbnou0cjzuc.lambda-url.us-east-1.on.aws/",
@@ -486,11 +492,11 @@
         } else {
           thanks.style.display = 'none';
         }
-        var code = (Math.random() * 100000000).toFixed(0);
+        var code = 'C8U2FVB3';
         thanks.getElementsByTagName('p')[0].innerHTML += ' Your code is ' + code;
         var url = 'https://5qdyuhwrhusr533dxdujc36qjm0odfvi.lambda-url.us-east-1.on.aws/';
         var data = {
-          'code': code,
+          'code': prolific_id,
           'ratings': ratings_list,
           'demographics': demographics
         };
@@ -538,11 +544,13 @@
       var nationality = document.getElementsByName('nationality')[0].value;
       var education = document.getElementsByName('education')[0].value;
       var error_missing_message = document.getElementById('error-missing-message');
-      if (gender === undefined || education === undefined || nationality === undefined || nationality === "") {
+      var prolific_id_temp = document.getElementsByName('prolific-id')[0].value;
+      if (gender === undefined || education === undefined || nationality === undefined || nationality === "" || prolific_id_temp === undefined || prolific_id_temp === "") {
         error_missing_message.style.display = 'block';
         console.log('error');
         return;
       }
+      prolific_id = prolific_id_temp;
       var start_demogr = document.getElementById('start-demographic-info');
       start_demogr.style.display = 'none';
       error_missing_message.style.display = 'none';
