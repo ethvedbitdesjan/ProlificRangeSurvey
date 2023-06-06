@@ -498,7 +498,8 @@
         var data = {
           'code': prolific_id,
           'ratings': ratings_list,
-          'demographics': demographics
+          'demographics': demographics,
+          'prolific' : 'true'
         };
         fetch(url, {'body':JSON.stringify(data), 'method':'POST', 'mode':'no-cors'})
         .then(function (response) {
