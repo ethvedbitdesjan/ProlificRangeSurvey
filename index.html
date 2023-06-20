@@ -466,6 +466,7 @@
     var ratingButtons = document.getElementsByClassName('rating-button');
     var img = new Image();
     var count_time = 0;
+    var previous = [];
 
     img.onload = function() {
       image.src = this.src;
@@ -500,6 +501,21 @@
           ShowEndSurveyQuickClick();
         }
         return;
+      }
+      previous.push(buttonValue);
+      if (previous.length > 6) {
+        var all_same = true;
+        for (let i = 0; i < previous.length - 1; i++) {
+          if (previous[i] != previous[i + 1]) {
+            all_same = false;
+            break;
+          }
+        }
+        if (all_same) {
+          ShowEndSurveyQuickClick();
+          return;
+        }
+        previous.shift();
       }
       rating = buttonValue;
       ratings_list.push([imageUrls[imageIndex], rating]);
