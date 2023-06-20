@@ -100,6 +100,14 @@
       color: blue;
     }
 
+    #end_survey_quick_click {
+      text-align: center;
+      margin: 10px;
+      font-size: 1.2em;
+      font-family: sans-serif;
+      color: blue;
+    }
+
     button:active {
       background-color: yellow;
       color: blue;
@@ -110,11 +118,11 @@
   <div id="welcome">
     <p> Welcome to the Funny Image Rating Survey! </p>
     <p> Please rate the funniness of the images below on a scale of 1 to 10. (1 being not funny and 10 being very funny)</p>
-    <p> For rating all the images, you will receive $1.00</p>
-    <p> The time required to rate all the images is 3-4 minutes</p>
+    <p> The time required to rate all the images is 9-10 minutes</p>
     <p> Only click on the rating buttons once, and wait till the next image loads(maximum 1 second), a message will show you when the next image is being processed.</p>
+    <p> We have checks to check for random clicking or robot activity, in that case you might not complete the survey.</p>
     <p> Please do not refresh the page. You will lose progress and will have to start again. </p>
-    <p> There are 50-55 images in this survey</p>
+    <p> There are 100-110 images in this survey</p>
     <p> At the end of the survey, we will provide you a code, please store it and use it appropriately to get the reward.</p>
     <p> Click the button below to begin. </p>
     <button class="start-button" value="1" id="start-button"> Let's Start</button>
@@ -373,6 +381,9 @@
       <p style="width: 100px;"> Very Funny </p>
     </div>
   </div>
+  <div id="end_survey_quick_click" style="display: none;">
+    <p>You have exceeded the number of clicks that were too quick(< 400 milliseconds). This is suspicious of random clicking or robot activity. We are sorry, but you can reload the page and start again and answer with deliberate clicks and human activity!</p>
+  </div>
   <div id="thanks" style="display: none;">
     <p>Thank you for your time!</p>
   </div>
@@ -397,7 +408,7 @@
     });
     $.ajax({
       async: false,
-      url: "https://raw.githubusercontent.com/ethvedbitdesjan/MTurkProlificSurvey/master/Links/GdriveLinks.txt",
+      url: "https://raw.githubusercontent.com/ethvedbitdesjan/MTurkProlificSurvey/master/Links/S3Files.txt",
       type: "GET",
       success: function(data) {
         // Do something with the data
@@ -410,12 +421,15 @@
     });
 
     console.log(allImageUrls.length);
-    const images_per_hit = 50;
+    var images_per_hit = 104;
     const num_groups = Math.floor(allImageUrls.length / images_per_hit);
     var start_idx = Math.min(group * images_per_hit, allImageUrls.length);
     var end_idx = Math.min((group + 1) * images_per_hit, allImageUrls.length);
     imageUrls = allImageUrls.slice(start_idx, end_idx);
+    console.log(imageUrls.length);
+    images_per_hit = 104;
     if (imageUrls.length < images_per_hit) {
+      console.log("adding images");
       var num_extra = images_per_hit - imageUrls.length;
       for (let i = 0; i < num_extra; i++) {
         var random_idx = (Math.floor(Math.random() * (allImageUrls.length - imageUrls.length)));
@@ -451,21 +465,42 @@
     var image = document.getElementById('image');
     var ratingButtons = document.getElementsByClassName('rating-button');
     var img = new Image();
+    var count_time = 0;
+
     img.onload = function() {
       image.src = this.src;
       var processing_message = document.getElementById('processing-message');
       processing_message.innerHTML = 'Continue';
       processing_message.style.display = 'block';
+      startTime = new Date().getTime();
     };
     var processing_message = document.getElementById('processing-message');
     function displayImage() {
       processing_message.innerHTML = 'Processing...Please Wait and Do Not Click any Ratings Buttons';
       processing_message.style.display = 'block';
-      img.src =  'https://drive.google.com/uc?export=view&id=' + imageUrls[imageIndex];
-      startTime = new Date().getTime();
+      img.src =  'https://vedaantfunnyimageshost.s3.amazonaws.com/' + imageUrls[imageIndex];
+    }
+
+    function ShowEndSurveyQuickClick() {
+      var end_survey_quick_click = document.getElementById('end_survey_quick_click');
+      end_survey_quick_click.style.display = 'block';
+      var rating_container = document.getElementById('rating-container');
+      rating_container.style.display = 'none';
+      var image_container = document.getElementById('image-container');
+      image_container.style.display = 'none';
     }
 
     function recordRating(buttonValue) {
+      var endTime = new Date().getTime();
+      var timeTaken = endTime - startTime;
+      if (timeTaken < 400) {
+        alert('Please spend more time looking at the image before rating it.');
+        count_time++;
+        if (count_time > 3) {
+          ShowEndSurveyQuickClick();
+        }
+        return;
+      }
       rating = buttonValue;
       ratings_list.push([imageUrls[imageIndex], rating]);
       if (imageIndex < imageUrls.length - 1) {
